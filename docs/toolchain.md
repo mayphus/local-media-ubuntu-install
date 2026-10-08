@@ -1,6 +1,8 @@
 # Input and toolchain
 
-## Pinned original image
+## Pinned alternative-method test image
+
+This is the original input to our legacy-preseed experiment, not the recovered historical installer. The user strongly recalls Ubuntu 20.04-era YAML autoinstall and Cubic; the exact historical point release and image/file remain unverified. No Subiquity autoinstall installation has been tested here.
 
 - File: `ubuntu-20.04.1-legacy-server-amd64.iso`
 - Size: **855638016 bytes** (816 MiB).

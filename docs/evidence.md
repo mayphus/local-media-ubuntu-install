@@ -4,9 +4,11 @@
 
 This record was checked against retained private installer/boot serial logs, command records, result JSON, checksum/signature records and the published companion article. Raw logs, generated account values, filesystem UUIDs, host identifiers and private local paths are deliberately not copied here. This is a sanitized evidence summary, not a publicly independently replayed test transcript.
 
-The original approach used local installation media and unattended Ubuntu installation. Cubic is the subsequently recalled historical customization tool. Embedded firmware PXE reportedly did not support the USB Ethernet adapter; iPXE was considered, not established as attempted and failed. Our new tool is xorriso. Exact original release, commands, answer file, hardware configuration and deployment performance remain unknown.
+The original approach used local installation media and unattended Ubuntu installation. The user now strongly recalls choosing Ubuntu 20.04-era Server specifically for YAML autoinstall support and simpler configuration, rather than legacy preseed. Cubic remains the recalled historical customization tool. The exact original point release, image/file, Cubic version, commands and answer file have not been recovered or independently verified. Hardware configuration and deployment performance remain unknown.
 
-## Completed offline experiment
+Embedded firmware PXE reportedly did not support the USB Ethernet adapter; iPXE was considered, not established as attempted and failed. Our xorriso/legacy-preseed work is an alternative-method reconstruction and demonstration. Its measured results do not verify the recalled original autoinstall implementation. No Subiquity autoinstall installation has been tested in this repository yet.
+
+## Completed alternative-method offline preseed experiment
 
 - Official Ubuntu 20.04.1 legacy-server AMD64 ISO: checksum matched and signed checksum verified with the preinstalled Ubuntu CD Image signing key.
 - QEMU TCG/SeaBIOS, 2 vCPUs, 3072 MiB RAM, a fresh 12 GiB sparse virtio disk, read-only ISO and no NIC. No physical devices or shared host directories.

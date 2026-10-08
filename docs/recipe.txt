@@ -1,5 +1,13 @@
 Ubuntu legacy preseed: basic system, DHCP and nginx demo
 
+HISTORICAL PROVENANCE
+The user strongly recalls choosing Ubuntu 20.04-era Server for YAML autoinstall
+support and simpler configuration, using Cubic for image customization. The
+exact original point release, image/file and configuration remain unverified.
+This preseed recipe is an alternative-method demonstration, not proof of that
+original implementation. No Subiquity autoinstall installation has been tested
+in this repository yet.
+
 WHAT THIS IS
 preseed.cfg is a self-contained template for Ubuntu 20.04.1 legacy-server AMD64,
 using debian-installer. It is not cloud-init or Subiquity autoinstall YAML and

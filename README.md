@@ -2,7 +2,9 @@
 
 Companion resources for [Reconstructing an unattended Ubuntu install from local media](https://mayphus.org/local-media-ubuntu-install/).
 
-This is a **new xorriso reconstruction**, not a recovered historical recipe. The historical image-customization tool is recalled as **Cubic**; its version and original configuration have not been recovered. Physical CR160 compatibility has not been established.
+The user now strongly recalls choosing **Ubuntu 20.04-era Server for YAML autoinstall support and simpler configuration**, and recalls using **Cubic** to customize the image. This is recollection, not a recovered artifact: the exact original point release, image/file, Cubic version and configuration remain unverified. Physical CR160 compatibility has not been established.
+
+The tested work here is an **alternative-method reconstruction using xorriso and legacy preseed**, not proof of the original YAML autoinstall implementation. **No Subiquity autoinstall installation has been tested in this repository yet.**
 
 The template targets **Ubuntu 20.04.1 legacy-server AMD64 / debian-installer / preseed / BIOS**. It is not a modern live-server Subiquity autoinstall file. Ubuntu 20.04 standard maintenance ended in May 2025; a reachable archive does not establish current security coverage. See [Canonical's lifecycle](https://ubuntu.com/about/release-cycle).
 
@@ -53,8 +55,9 @@ Full-tree extraction is for inspection. Repacking imports the authenticated orig
 
 | Scope | Status |
 | --- | --- |
-| Earlier offline image: unattended install, then disk-only instrumented boot | Completed; 638.102-second install, about 21-second boot |
+| Alternative legacy-preseed offline image: unattended install, then disk-only instrumented boot | Completed; 638.102-second install, about 21-second boot |
 | Earlier hybrid image via emulated USB storage | Installer kernel reached; no full USB-path installation |
+| Subiquity YAML autoinstall installation | Not tested in this repository |
 | This DHCP/nginx template | Static checks only; not installed or runtime-tested |
 | This packaged remaster helper | Static checks only; not run to produce a new ISO |
 | UEFI unattended boot | Not configured or tested; original structures retained |
