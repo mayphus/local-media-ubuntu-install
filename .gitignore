@@ -1,0 +1,14 @@
+# Personalized credentials, downloads, unpacked trees and VM artifacts stay local.
+preseed.local.cfg
+*.iso
+*.iso.sha256
+*.qcow2
+*.img
+*.raw
+*.log
+SHA256SUMS
+SHA256SUMS.gpg
+remaster-work/
+work/
+private/
+__pycache__/

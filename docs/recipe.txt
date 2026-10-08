@@ -1,0 +1,180 @@
+Ubuntu legacy preseed: basic system, DHCP and nginx demo
+
+WHAT THIS IS
+preseed.cfg is a self-contained template for Ubuntu 20.04.1 legacy-server AMD64,
+using debian-installer. It is not cloud-init or Subiquity autoinstall YAML and
+will not work as an answer file for current live-server images.
+
+It creates a normal sudo-capable user with root login disabled, configures wired
+DHCP, installs standard utilities and nginx from Ubuntu repositories, writes a
+static demo page, validates nginx configuration and enables nginx on boot.
+No SSH server is selected. No host service was started to prepare these files.
+
+DISK WARNING — READ BEFORE BOOTING
+The template automatically repartitions and formats ALL of /dev/vda without
+confirmation, and installs GRUB there. Its scope is one disposable VM with one
+blank virtio disk of at least 12 GiB. Do not use it on physical hardware or a VM
+with valuable disks. /dev/vda is a guest device name, not a general safe default.
+Even after changing the target, all partition confirmations remain automatic.
+
+FILL THREE PLACEHOLDERS
+1. REPLACE_WITH_DISPLAY_NAME: your chosen test account display name.
+2. REPLACE_WITH_USERNAME: a valid lowercase Linux login name.
+3. REPLACE_WITH_SHA512_PASSWORD_HASH: a new SHA-512 crypt hash beginning $6$.
+   With existing OpenSSL, run `openssl passwd -6` in a trusted local terminal
+   and enter a fresh password at its hidden prompt. Paste the complete output
+   as the value; do not add shell quotes in preseed.cfg. Do not put a password
+   directly into a shell command/history. No password or usable hash is supplied.
+
+The early command flags unfilled account placeholders at /cdrom/preseed.cfg.
+Do not rely on that check to protect disks: fill and review the file beforehand.
+Anyone who has the customized ISO can read the hash, so use fresh test credentials
+and protect/delete your personalized media appropriately. No cloud or company
+credentials are needed. Optionally edit hostname, locale and time zone.
+
+INSTALLER MEDIA AND BOOT
+Use the exact legacy image, not a similarly named live-server ISO:
+https://cdimage.ubuntu.com/ubuntu-legacy-server/releases/20.04/release/ubuntu-20.04.1-legacy-server-amd64.iso
+Verify its official SHA256SUMS and SHA256SUMS.gpg before use. The independently
+verified original is 855638016 bytes with SHA-256:
+f11bda2f2caed8f420802b59f382c25160b114ccc665dbac9c5046e7fceaced2
+
+Place the filled file at /preseed.cfg in the installation ISO. For the tested
+BIOS/ISOLINUX path, an automatic entry can use:
+
+DEFAULT install
+PROMPT 0
+TIMEOUT 10
+LABEL install
+ KERNEL /install/vmlinuz
+ APPEND initrd=/install/initrd.gz auto=true priority=critical preseed/file=/cdrom/preseed.cfg ---
+
+For serial observation, add console=ttyS0,115200n8 DEBIAN_FRONTEND=text before
+---, and console=ttyS0,115200n8 after it. ISOLINUX also needs SERIAL 0 115200.
+Preserve the original ISO boot metadata when remastering (for example xorriso
+-boot_image any replay), and refresh its file-checksum list after modifications.
+No external firstboot script or configuration download is needed by this file.
+UEFI automatic boot was not prepared or tested here.
+
+Use a controlled VM network that supplies DHCP, DNS and outbound repository
+access, for example user-mode/NAT networking. No bridge, DHCP server on your LAN,
+host port forwarding or physical-device attachment is required. This document
+does not start such a VM. The nginx page will listen on guest IPv4 TCP 80; under
+user-mode networking it is not automatically reachable from the host or LAN.
+
+After installation, remove/eject the ISO and boot the installed disk first.
+Leaving an auto-install ISO first in the boot order risks reinstalling the disk.
+This variant reboots normally; it includes none of the experiment's marker,
+serial-proof systemd unit or automatic post-boot poweroff behavior. Nginx is
+configured using the installer late_command and enabled for normal boot.
+Package maintainer scripts may attempt starts during installation; the template
+itself does not use systemctl --now. Actual package/boot behavior is untested.
+
+NETWORK / PACKAGES / MAINTENANCE
+Internet repository access is needed for nginx, dependencies and safe-upgrade.
+DHCP or mirror failure can prompt or stop installation; this is not an offline
+recipe. Auto interface selection assumes one suitable wired NIC. Review it if
+there are multiple NICs. Wi-Fi, VLANs and static addressing are not configured.
+
+The official focal, focal-updates and focal-security Release files were reachable
+when checked on 2026-10-07:
+https://archive.ubuntu.com/ubuntu/dists/focal/Release
+https://archive.ubuntu.com/ubuntu/dists/focal-updates/Release
+https://security.ubuntu.com/ubuntu/dists/focal-security/Release
+This verifies metadata availability, not every package download or this install.
+Do not assume old-releases.ubuntu.com is needed; recheck before later use.
+APT signature checking is retained even though the legacy mirror uses HTTP.
+
+Ubuntu 20.04 standard security maintenance ended in May 2025; expanded coverage
+requires the applicable Ubuntu Pro entitlement. This file does not configure it.
+Do not treat a reachable archive or safe-upgrade as proof of current security
+coverage. This is a legacy compatibility example, not a recommendation to expose
+an unmaintained demo system publicly. Automatic-update policy is left at none.
+Source: https://ubuntu.com/about/release-cycle
+
+VERIFY AFTER AN ACTUAL INSTALL
+At the guest console, log in using the account you configured:
+  ip -4 address
+  ip route
+  sudo nginx -t
+  systemctl is-enabled nginx
+  systemctl is-active nginx
+  sudo ss -ltnp
+  journalctl -u nginx --no-pager -n 30
+
+Expected: a DHCP address/default route, valid nginx configuration, enabled and
+active service, and an IPv4 TCP 80 listener. Check the page without extra tools:
+  python3 -c 'import urllib.request; print(urllib.request.urlopen("http://127.0.0.1/", timeout=5).read().decode())'
+Expected page text: nginx demo is running.
+Reboot and repeat enabled/active and page checks to confirm startup persistence.
+
+VALIDATION BOUNDARY
+The base legacy-installer account/partitioning workflow was previously tested
+in a disconnected VM. THIS DHCP + nginx variant has only static validation:
+debconf check-only parsing, continuation and placeholder review, shell syntax
+checks, and extraction/review of its embedded nginx config and HTML. No networked
+installation, nginx config execution, package download or service startup was
+performed for this template. It is not claimed to be end-to-end tested or the
+historical deployment recipe.
+
+UNPACK AND REPACK THE ISO
+The included remaster-ubuntu-legacy.sh is a readable file-only helper. It does
+not download anything, install host packages, mount disks, start a VM, or write
+an SD card. Required existing tools: bash, xorriso, Python 3, gpgv and standard
+Unix utilities. It refuses an existing output ISO or work directory. Use normal
+user permissions in a task directory, not sudo.
+
+A. Obtain the original ISO and the two verification files from the same official
+release directory above. Save them together, retaining these verification names:
+  SHA256SUMS
+  SHA256SUMS.gpg
+The helper validates the signature using the installed Ubuntu archive keyring,
+which contains the CD-image key, and checks the exact pinned ISO SHA-256 above.
+If your trusted keyring lives elsewhere, set UBUNTU_KEYRING to that file. Do not
+bypass verification or trust a key downloaded only alongside the image.
+
+B. Fill the three account placeholders in preseed.cfg. Then, for example:
+  bash remaster-ubuntu-legacy.sh \
+    ./ubuntu-20.04.1-legacy-server-amd64.iso \
+    ./preseed.cfg \
+    ./ubuntu-nginx-demo.iso \
+    ./remaster-work
+All paths are parameters; output and work paths must be new. Expect around
+2 GiB free for extraction plus a new ISO, excluding the original image.
+
+C. What the helper does, in order:
+1. Unpack the ISO with xorriso -osirrox on -indev ORIGINAL -extract / WORK/tree.
+   You can inspect WORK/tree as ordinary files; no raw device or loop mount.
+2. Copy your filled file to WORK/tree/preseed.cfg.
+3. Write the automatic BIOS menu to WORK/tree/isolinux/isolinux.cfg.
+4. Recompute md5sum.txt over regular files. Exclude md5sum.txt itself,
+   isolinux/isolinux.bin and isolinux/boot.cat, because boot image generation
+   patches or regenerates those two files. Original media uses those exclusions.
+   Skip symbolic links and do not follow the ISO's ubuntu-to-dot link.
+5. Import the original ISO, replay its BIOS/UEFI/hybrid boot metadata, and overlay
+   exactly those three edited files:
+
+  xorriso -indev ORIGINAL.iso -outdev OUTPUT.iso \
+    -boot_image any replay \
+    -map WORK/tree/preseed.cfg /preseed.cfg \
+    -map WORK/tree/isolinux/isolinux.cfg /isolinux/isolinux.cfg \
+    -map WORK/tree/md5sum.txt /md5sum.txt
+
+6. Write OUTPUT.iso.sha256 and WORK/boot-layout.txt, retaining extraction and
+   repack logs. The new hash records your output; Canonical's signature covers
+   only the original image, not your modified image.
+
+This explains unpacking and repacking without a generic mkisofs command that
+could lose hybrid boot information. Full-tree extraction is useful for inspection
+but not intrinsically required by xorriso's import-and-map method. Do not perform
+a second, separate repack workflow. The helper intentionally maps only its three
+edits. If you change other extracted files, they will NOT be incorporated unless
+you explicitly add matching -map entries and update the checksum manifest.
+
+BIOS automatic boot uses the same mechanism exercised in the earlier offline
+experiment. Original UEFI boot structures are preserved by replay, but their
+menu is not configured for unattended installation and has not been validated.
+The new nginx helper itself has only static checks, not an executed remaster or
+networked install. A future test should use one disposable VM, 2 vCPUs/3 GiB RAM,
+one new 12 GiB virtio disk and controlled user-mode networking for DHCP/packages,
+with no physical disks, bridge or port forwarding. Such a test is NOT run here.
