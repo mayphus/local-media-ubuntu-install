@@ -2,7 +2,9 @@
 
 Companion resources for [Reconstructing an unattended Ubuntu install from local media](https://mayphus.org/local-media-ubuntu-install/).
 
-The user now strongly recalls choosing **Ubuntu 20.04-era Server for YAML autoinstall support and simpler configuration**, and recalls using **Cubic** to customize the image. This is recollection, not a recovered artifact: the exact original point release, image/file, Cubic version and configuration remain unverified. Physical CR160 compatibility has not been established.
+Privately reviewed historical notes document **Cubic image customization with YAML autoinstall**, booting from an SD card with configuration on the medium. The user strongly recalls choosing **Ubuntu 20.04-era Server for autoinstall support and simpler configuration**; the exact original release and ISO remain unverified. The notes describe a workflow, not proof that it executed successfully. Physical CR160 compatibility has not been established.
+
+Local-media boot avoided the PXE boot setup, but historical provisioning was **not wholly offline or unattended**: the notes describe DHCP, Ubuntu package/update repositories, a LAN web service for application archives and startup configuration, and a separate SSH-based initialization/device-binding step after the operator removed the card and booted the installed system. See the [sanitized provenance record](docs/evidence.md#documented-historical-workflow). The private source and its example code are not included.
 
 The tested work here is an **alternative-method reconstruction using xorriso and legacy preseed**, not proof of the original YAML autoinstall implementation. **No Subiquity autoinstall installation has been tested in this repository yet.**
 

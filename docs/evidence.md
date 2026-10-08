@@ -4,9 +4,22 @@
 
 This record was checked against retained private installer/boot serial logs, command records, result JSON, checksum/signature records and the published companion article. Raw logs, generated account values, filesystem UUIDs, host identifiers and private local paths are deliberately not copied here. This is a sanitized evidence summary, not a publicly independently replayed test transcript.
 
-The original approach used local installation media and unattended Ubuntu installation. The user now strongly recalls choosing Ubuntu 20.04-era Server specifically for YAML autoinstall support and simpler configuration, rather than legacy preseed. Cubic remains the recalled historical customization tool. The exact original point release, image/file, Cubic version, commands and answer file have not been recovered or independently verified. Hardware configuration and deployment performance remain unknown.
+## Documented historical workflow
 
-Embedded firmware PXE reportedly did not support the USB Ethernet adapter; iPXE was considered, not established as attempted and failed. Our xorriso/legacy-preseed work is an alternative-method reconstruction and demonstration. Its measured results do not verify the recalled original autoinstall implementation. No Subiquity autoinstall installation has been tested in this repository yet.
+A read-only review of privately supplied historical notes supports Cubic preparing an Ubuntu image with YAML autoinstall. This section records only the approved high-level findings; the source document, example code, internal addresses, credential-related material and organization/application identifiers are not reproduced here.
+
+The documented sequence is:
+
+1. Customize the image with Cubic and boot locally from an SD card, with installation configuration on the medium.
+2. Use ordinary DHCP networking and Ubuntu repositories for packages and updates. A simple LAN web service supplies generic application archives and startup configuration.
+3. After OS installation, the operator removes the card and boots the installed system.
+4. Perform a separate SSH-based initialization and device-binding step.
+
+Local media therefore avoided the PXE boot setup; it did not remove dependence on network resources or manual post-install work. The notes support a documented workflow, not successful-execution proof or a fully unattended deployment claim. Their pasted example contains transcription/indentation defects and must not be treated as reusable executable code. No part of that example is incorporated into these templates.
+
+The user strongly recalls choosing Ubuntu 20.04-era Server for YAML autoinstall support and simpler configuration. The exact original Ubuntu release/ISO remains unverified. Cubic's exact version, hardware compatibility and deployment performance are also unverified.
+
+Embedded firmware PXE reportedly did not support the USB Ethernet adapter; iPXE was considered, not established as attempted and failed. Our xorriso/legacy-preseed work remains an alternative-method reconstruction and demonstration. Its measured offline results do not verify the documented historical autoinstall implementation or the network provisioning steps. **No Subiquity autoinstall installation has been validated in this repository.**
 
 ## Completed alternative-method offline preseed experiment
 
